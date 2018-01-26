@@ -5,11 +5,11 @@ import smtplib
 from email.mime.text import MIMEText  
 cf = ConfigParser.ConfigParser()
 cf.read('Config.conf')
-host=cf.get('database', 'host')
+hostdb=cf.get('database', 'host')
 port=cf.get('database', 'port')
 password=cf.get('database', 'password')
 # r= redis.Redis(host='10.10.10.12', port=6379,password='netsdl')
-r= redis.Redis(host=host, port=port,password=password)
+r= redis.Redis(host=hostdb, port=port,password=password)
 info=r.info(section='clients')
 content=''
 for key in info: 
@@ -21,7 +21,7 @@ sender = cf.get('mail','sender')
 pwd = cf.get('mail','pwd')
 receiver = cf.get('mail','receive').split(',')
 msg = MIMEText(content,_subtype='plain', _charset='UTF-8')
-mailTitle='clients info'
+mailTitle='clients info'+hostdb+':'+str(port)
 msg['subject'] = mailTitle
 msg['from'] = sender
 msg['to'] = ",".join(receiver)
