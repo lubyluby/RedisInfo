@@ -1,19 +1,22 @@
 #encoding=utf-8 
+import json
 import ConfigParser  
 import redis
 import smtplib  
 from email.mime.text import MIMEText  
+
 cf = ConfigParser.ConfigParser()
+
 cf.read('Config.conf')
 hostdb=cf.get('database', 'host')
 port=cf.get('database', 'port')
 password=cf.get('database', 'password')
-# r= redis.Redis(host='10.10.10.12', port=6379,password='netsdl')
-r= redis.Redis(host=hostdb, port=port,password=password)
-info=r.info(section='clients')
-content=''
-for key in info: 
-  content+=key+':'+str(info[key])+'\n'  
+try:
+  r= redis.Redis(host=hostdb, port=port,password=password)
+  info=r.info(section='clients')
+  content=json.dumps(info)
+except Exception,e:
+  print e
 
 host = 'smtp.netsdl.com'
 port = 25
